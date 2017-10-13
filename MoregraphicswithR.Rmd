@@ -1,0 +1,89 @@
+---
+title: "Dplyr"
+output: html_document
+---
+```{r}
+library(deplyr)
+select(gapminder, country, year, lifeExp)
+select(gapminder, -year)
+```
+```{r}
+install.packages('dplyr')
+```
+
+```{r}
+library("deplyr")
+
+```
+
+```{r}
+library("dplyr")
+```
+```{r}
+year_country_gdp_euro <- gapminder %>%
+    filter(continent=="Europe") %>%
+    select(year,country,gdpPercap)
+```
+
+```{r}
+gapminder2 <- filter(gapminder, continent == "Europe", lifeExp > 75, year ==1997)
+gapminder3 <- select(gapminder2, -year, -continent)
+gapminder3
+write.csv(gapminder3, file="my-filtered-results.csv")
+```
+```{r}
+#shortcut for pipe is ctrl+shift+m
+#this chunk does the same thing as above but quicker and easier, using pipes
+gapminder %>% filter(continent == "Europe", lifeExp > 75, year == 1997)
+```
+```{r}
+gapminder %>%  filter(continent == "Europe", lifeExp > 75, year ==1997) %>%  select(-year, -continent) %>% 
+  write.csv(file="my-filtered-results.csv")
+getwd()
+
+```
+
+```{r}
+year_country_lifeExp_Africa <- gapminder %>%
+    filter(continent=="Africa") %>%
+    select(year,country,lifeExp)
+year_country_lifeExp_Africa
+```
+```{r}
+gapminder %>%  filter(continent %in% c("Europe", "Africa")) %>% select(year, country, lifeExp) %>%  arrange(desc(lifeExp))
+```
+
+```{r}
+mutate(gapminder, PopInMillions = pop / 1000000)
+```
+
+```{r}
+mutate(gapminder, PopInMillions = pop / 1000000, ShortName=substr(country, 1 ,4))
+```
+
+```{r}
+lifeExpcountry <- gapminder %>%
+    group_by("Country"=country) %>%
+    summarize(mean_lifeExp=mean(lifeExp)) %>% 
+   filter(mean_lifeExp == min(mean_lifeExp) | mean_lifeExp == max(mean_lifeExp))
+lifeExpcountry
+```
+```{r}
+lifeExpcontinents %>%
+   arrange(desc(mean_lifeExp)) %>%
+   head(1)
+```
+```{r}
+myplot <- gapminder %>%
+   # Get the start letter of each country
+   mutate(startsWith = substr(country, start = 1, stop = 1)) %>%
+   # Filter countries that start with "A" or "Z"
+   filter(startsWith %in% c("A", "Z")) %>%
+   # Make the plot
+   ggplot(aes(x = year, y = lifeExp, color = continent)) +
+   geom_line() +
+   facet_wrap( ~ country)
+
+ggsave(myplot, file = "myplot.png")
+```
+
