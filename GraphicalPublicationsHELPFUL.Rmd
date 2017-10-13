@@ -1,0 +1,86 @@
+---
+title: "DataManipulation"
+output: html_document
+---
+
+```{r}
+calcGDP <- function(dat, year=NULL, country=NULL) {
+  if(!is.null(year)) {
+    dat <- dat[dat$year %in% year, ]
+  }
+  if (!is.null(country)) {
+    dat <- dat[dat$country %in% country,]
+  }
+  gdp <- dat$pop * dat$gdpPercap
+  
+  new <- cbind(dat, gdp=gdp)
+  return(new)
+}
+gapminder
+```
+```{r}
+library(ggplot2)
+ggplot(data = gapminder, aes(x = year, y = lifeExp, by = country, color = continent)) + geom_point()
+
+
+```
+```{r}
+
+
+
+```
+
+```{r}
+library(ggplot2)
+ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country, color=continent)) +
+  geom_line() + geom_point()
+)
+```
+
+```{r}
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color=continent)) +
+  geom_point()
+```
+
+```{r}
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color=continent)) +
+  geom_point() +scale_x_log10()
+```
+```{r}
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +scale_x_log10() + geom_smooth(method = "lm")
+#linear model
+```
+
+```{r}
+ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+  geom_point() +scale_x_log10() + facet_wrap(~continent) 
+#facet_wrap shows the trend for each continent separately
+```
+```{r}
+starts.with <- substr(gapminder$country, start = 1, stop = 1)
+az.countries <- gapminder[starts.with %in% c("A", "Z"), ]
+ggplot(data = az.countries, aes(x = year, y = lifeExp, color=continent)) +
+  geom_line() + facet_wrap( ~ country)
+```
+```{r}
+ggplot(data = az.countries, aes(x = year, y = lifeExp, color=continent)) +
+  geom_line() + facet_wrap( ~ country) +
+  labs(
+    x = "Year",              # x axis title
+    y = "Life expectancy",   # y axis title
+    title = "Figure 1",      # main title of figure
+    color = "Continent"      # title of legend
+  ) +
+  theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
+```
+```{r}
+install.packages("ggthemes")
+```
+
+```{r}
+ggplot(data = gapminder, aes(x = gdpPercap, fill=continent)) +
+  geom_density(alpha=0.6) + scale_x_log10() + facet_wrap(~year) + labs(x="GDP per capita", y="Density") + theme_grey()
+```
+
+
